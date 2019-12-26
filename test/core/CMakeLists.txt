@@ -59,7 +59,9 @@ target_include_directories(
 
 target_link_libraries(
     ${SUBPROJ_NAME}
-    ${TESTABLE_TARGET})
+    ${TESTABLE_TARGET}
+    GTest::gtest
+    GTest::gtest_main)
 
 add_test(
     NAME All${TESTABLE_TARGET}Tests

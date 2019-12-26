@@ -29,6 +29,9 @@ foreach(SUBPROJ ${SUBPROJECT_LIST})
     add_subdirectory(${SUBPROJ})
 endforeach()
 
+# Find Google test library
+find_package(GTest CONFIG REQUIRED)
+
 enable_testing()
 foreach(TEST ${TEST_LIST})
     string(REGEX REPLACE "^test\/" "" TEST_NAME ${TEST})
