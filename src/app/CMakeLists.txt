@@ -1,3 +1,5 @@
+include(BuildHelpers)
+
 set(SUBPROJ_NAME                          app)
 
 set(${SUBPROJ_NAME}_CXX_STANDARD          17)
@@ -13,7 +15,10 @@ set(${SUBPROJ_NAME}_HEADERS
     "")
 
 set(${SUBPROJ_NAME}_SOURCES
-    "")
+    "main.cpp")
+
+qt5_add_resources(${SUBPROJ_NAME}_RESOURCES
+    "${PROJECT_ROOT_DIR}/res/app.qrc")
 
 # ############################################################### #
 # Options ####################################################### #
@@ -32,7 +37,8 @@ generate_basic_options_executable(${SUBPROJ_NAME})
 set(
     ${SUBPROJ_NAME}_ALL_SRCS
     ${${SUBPROJ_NAME}_HEADERS}
-    ${${SUBPROJ_NAME}_SOURCES})
+    ${${SUBPROJ_NAME}_SOURCES}
+    ${${SUBPROJ_NAME}_RESOURCES})
 
 # ############################################################### #
 # Create target for build ####################################### #
@@ -67,7 +73,47 @@ target_include_directories(
     ${SUBPROJ_NAME}
     PRIVATE   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
     INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
-    
+
+# Link qt
+target_link_libraries(${SUBPROJ_NAME} PRIVATE Qt5::Core Qt5::Quick Qt5::Widgets)
+
+# ############################################################### #
+# Commands ###################################################### #
+# ############################################################### #
+
+prepend(OUT ${SUBPROJ_NAME}_TRANSLATION_TARGETS
+    PREFIX ${CMAKE_CURRENT_SOURCE_DIR}
+    FILES
+        ${${SUBPROJ_NAME}_HEADERS}
+        ${${SUBPROJ_NAME}_SOURCES})
+
+if (WIN32)
+    add_custom_command(TARGET app PRE_BUILD
+        COMMAND "${CMAKE_COMMAND}" -E
+        env PATH="${_qt_bin_dir}" "${LUPDATE_EXECUTABLE}"
+        ${PROJECT_ROOT_DIR}/res/app.qrc
+        ${${SUBPROJ_NAME}_TRANSLATION_TARGETS}
+        -ts
+        ${PROJECT_ROOT_DIR}/res/translations/main_ru.ts
+        ${PROJECT_ROOT_DIR}/res/translations/main_en.ts)
+
+    add_custom_command(TARGET app PRE_BUILD
+        COMMAND "${CMAKE_COMMAND}" -E
+        env PATH="${_qt_bin_dir}" "${LRELEASE_EXECUTABLE}"
+        ${PROJECT_ROOT_DIR}/res/translations/main_ru.ts
+        ${PROJECT_ROOT_DIR}/res/translations/main_en.ts)
+
+    add_custom_command(TARGET ${SUBPROJ_NAME} POST_BUILD
+        COMMAND "${CMAKE_COMMAND}" -E
+        env PATH="${_qt_bin_dir}" "${WINDEPLOYQT_EXECUTABLE}"
+        --verbose 0
+        --no-compiler-runtime
+        --qmldir "${PROJECT_ROOT_DIR}/res"
+        \"$<TARGET_FILE:app>\"
+        COMMENT "Deploying Qt..."
+        )
+endif()
+
 # ############################################################### #
 # Installing #################################################### #
 # ############################################################### #

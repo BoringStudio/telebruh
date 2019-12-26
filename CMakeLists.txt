@@ -25,6 +25,8 @@ set(_PROJECT_VERSION
 
 project(${_PROJECT_NAME} LANGUAGES ${_PROJECT_LANGUAGE} VERSION ${_PROJECT_VERSION})
 
+include(PrepareQt)
+
 foreach(SUBPROJ ${SUBPROJECT_LIST})
     add_subdirectory(${SUBPROJ})
 endforeach()
