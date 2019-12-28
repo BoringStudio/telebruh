@@ -1,7 +1,7 @@
 #pragma once
 
-#include "generated/health_check_service.grpc.pb.h"
-#include "generated/health_check_service.pb.h"
+#include "protocol/health_check_service.grpc.pb.h"
+#include "protocol/health_check_service.pb.h"
 
 namespace core {
 

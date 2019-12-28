@@ -10,13 +10,16 @@ set(${SUBPROJ_NAME}_MINOR_VERSION 0)
 set(${SUBPROJ_NAME}_PATCH_VERSION 1)
 
 # Insert here your source files
+file(GLOB ${SUBPROJ_NAME}_PROTO
+        "protos/*.proto")
+
 file(GLOB ${SUBPROJ_NAME}_HEADERS
-        "generated/*.h"
-        "generated/*.hpp")
+        "*.h"
+        "*.hpp")
 
 file(GLOB ${SUBPROJ_NAME}_SOURCES
-        "generated/*.cc"
-        "generated/*.cpp")
+        "*.cc"
+        "*.cpp")
 
 # ############################################################### #
 # Options ####################################################### #
@@ -80,15 +83,18 @@ set_target_properties(
 
 target_include_directories(
         ${SUBPROJ_NAME}
-        PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-        INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+        PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>
+        INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>
         $<INSTALL_INTERFACE:include>)
 
 target_compile_definitions(
         ${SUBPROJ_NAME}
         PUBLIC
-        _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS
-        _WIN32_WINNT=0x600)
+        _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS)
+
+if (MSVC)
+    target_compile_definitions(${SUBPROJ_NAME} PUBLIC _WIN32_WINNT=0x600)
+endif()
 
 # Configure protobuf
 target_link_libraries(${SUBPROJ_NAME} PUBLIC protobuf::libprotobuf gRPC::grpc++)
@@ -100,19 +106,19 @@ target_link_libraries(${SUBPROJ_NAME} PUBLIC protobuf::libprotobuf gRPC::grpc++)
 # Generate code for services
 add_custom_command(TARGET ${SUBPROJ_NAME} PRE_BUILD
         COMMAND "${CMAKE_COMMAND}" -E
-        env PATH="" ${PROTOC_EXECUTABLE}
+        env PATH="${CMAKE_CURRENT_SOURCE_DIR}" ${PROTOC_EXECUTABLE}
         -I ${CMAKE_CURRENT_SOURCE_DIR}/protos
-        --grpc_out=${CMAKE_CURRENT_SOURCE_DIR}/generated
+        --grpc_out=${CMAKE_CURRENT_SOURCE_DIR}
         --plugin=protoc-gen-grpc=${GRPC_PLUGIN_EXECUTABLE}
-        ${CMAKE_CURRENT_SOURCE_DIR}/protos/health_check_service.proto)
+        ${${SUBPROJ_NAME}_PROTO})
 
 # Generate code for other proto
 add_custom_command(TARGET ${SUBPROJ_NAME} PRE_BUILD
         COMMAND "${CMAKE_COMMAND}" -E
-        env PATH="" ${PROTOC_EXECUTABLE}
+        env PATH="${CMAKE_CURRENT_SOURCE_DIR}" ${PROTOC_EXECUTABLE}
         -I ${CMAKE_CURRENT_SOURCE_DIR}/protos
-        --cpp_out=${CMAKE_CURRENT_SOURCE_DIR}/generated
-        ${CMAKE_CURRENT_SOURCE_DIR}/protos/health_check_service.proto)
+        --cpp_out=${CMAKE_CURRENT_SOURCE_DIR}
+        ${${SUBPROJ_NAME}_PROTO})
 
 # ############################################################### #
 # Installing #################################################### #

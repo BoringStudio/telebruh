@@ -1,4 +1,0 @@
-syntax = "proto3";
-
-import public "health_check_service.proto";
-import public "hello_world_service.proto";

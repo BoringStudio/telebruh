@@ -1,2 +1,5 @@
-generated/
-!generated/dummy.cpp
+*.hpp
+*.h
+*.cpp
+*.cc
+!dummy.cpp
