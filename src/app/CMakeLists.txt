@@ -75,7 +75,16 @@ target_include_directories(
     INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 
 # Link qt
+# Configure Qt behaviour
+set_target_properties(
+    ${SUBPROJ_NAME} PROPERTIES
+    CMAKE_AUTOMOC ON
+    CMAKE_AUTORCC ON)
+
 target_link_libraries(${SUBPROJ_NAME} PRIVATE Qt5::Core Qt5::Quick Qt5::Widgets)
+
+# Link core
+target_link_libraries(${SUBPROJ_NAME} PRIVATE core)
 
 # ############################################################### #
 # Commands ###################################################### #
@@ -88,16 +97,16 @@ prepend(OUT ${SUBPROJ_NAME}_TRANSLATION_TARGETS
         ${${SUBPROJ_NAME}_SOURCES})
 
 if (WIN32)
-    add_custom_command(TARGET app PRE_BUILD
+    add_custom_command(TARGET ${SUBPROJ_NAME} PRE_BUILD
         COMMAND "${CMAKE_COMMAND}" -E
         env PATH="${_qt_bin_dir}" "${LUPDATE_EXECUTABLE}"
-        ${PROJECT_ROOT_DIR}/res/app.qrc
+        ${PROJECT_ROOT_DIR}/res/${SUBPROJ_NAME}.qrc
         ${${SUBPROJ_NAME}_TRANSLATION_TARGETS}
         -ts
         ${PROJECT_ROOT_DIR}/res/translations/main_ru.ts
         ${PROJECT_ROOT_DIR}/res/translations/main_en.ts)
 
-    add_custom_command(TARGET app PRE_BUILD
+    add_custom_command(TARGET ${SUBPROJ_NAME} PRE_BUILD
         COMMAND "${CMAKE_COMMAND}" -E
         env PATH="${_qt_bin_dir}" "${LRELEASE_EXECUTABLE}"
         ${PROJECT_ROOT_DIR}/res/translations/main_ru.ts
@@ -109,7 +118,7 @@ if (WIN32)
         --verbose 0
         --no-compiler-runtime
         --qmldir "${PROJECT_ROOT_DIR}/res"
-        \"$<TARGET_FILE:app>\"
+        \"$<TARGET_FILE:${SUBPROJ_NAME}>\"
         COMMENT "Deploying Qt..."
         )
 endif()

@@ -11,10 +11,12 @@ set(${SUBPROJ_NAME}_PATCH_VERSION         1)
 
 # Insert here your source files
 set(${SUBPROJ_NAME}_HEADERS
-    "")
+    "core.hpp"
+    "HealthCheckServiceImpl.hpp")
 
 set(${SUBPROJ_NAME}_SOURCES
-    "")
+    "core.cpp"
+    "HealthCheckServiceImpl.cpp")
 
 # ############################################################### #
 # Options ####################################################### #
@@ -81,6 +83,8 @@ target_include_directories(
     PRIVATE   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
     INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
               $<INSTALL_INTERFACE:include>)
+
+target_link_libraries(${SUBPROJ_NAME} PUBLIC protocol)
 
 # ############################################################### #
 # Installing #################################################### #

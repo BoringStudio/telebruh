@@ -10,6 +10,7 @@ set(_PROJECT_PATCH_VERSION 1)
 set(SUBPROJECT_LIST
     "src/core"
     "src/app"
+    "src/protocol"
     )
 set(TEST_LIST
     "test/core"
@@ -25,7 +26,9 @@ set(_PROJECT_VERSION
 
 project(${_PROJECT_NAME} LANGUAGES ${_PROJECT_LANGUAGE} VERSION ${_PROJECT_VERSION})
 
+# Prepare special libraries
 include(PrepareQt)
+include(PreparegRPC)
 
 foreach(SUBPROJ ${SUBPROJECT_LIST})
     add_subdirectory(${SUBPROJ})

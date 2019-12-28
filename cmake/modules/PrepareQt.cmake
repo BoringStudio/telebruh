@@ -11,7 +11,3 @@ find_program(WINDEPLOYQT_EXECUTABLE windeployqt HINTS "${_qt_bin_dir}")
 # Localization generators
 find_program(LUPDATE_EXECUTABLE lupdate HINTS "${_qt_bin_dir}")
 find_program(LRELEASE_EXECUTABLE lrelease HINTS "${_qt_bin_dir}")
-
-# Configure Qt behaviour
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
