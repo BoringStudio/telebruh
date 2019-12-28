@@ -80,8 +80,8 @@ set_target_properties(
 
 target_include_directories(
     ${SUBPROJ_NAME}
-    PRIVATE   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-    INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    PRIVATE   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>
+    INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>
               $<INSTALL_INTERFACE:include>)
 
 target_link_libraries(${SUBPROJ_NAME} PUBLIC protocol)

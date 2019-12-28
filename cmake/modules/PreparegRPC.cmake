@@ -1,4 +1,6 @@
 # Find components
+find_package(ZLIB REQUIRED)
+find_package(c-ares CONFIG REQUIRED)
 find_package(Protobuf CONFIG REQUIRED)
 find_package(gRPC CONFIG REQUIRED)
 
